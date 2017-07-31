@@ -1,0 +1,16 @@
+#myForm {
+    position: fixed;
+    left:50%;
+    top:50%;
+    transform: translate(-50%, -50%);
+}
+#myForm fieldset {
+    display: inline-block;
+}
+#myForm .for-input {
+    margin-bottom: 5px;
+}
+#myForm .for-input label {
+    display: block;
+    font-weight:bold;
+}
