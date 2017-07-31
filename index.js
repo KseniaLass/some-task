@@ -11,7 +11,8 @@ class Form {
         //=> { isValid: Boolean, errorFields: String[] }
         let data = this.__getData();
 
-        let errorFields = [];
+        let isValid = true,
+            errorFields = [];
 
         if (!this.__checkFIO(data.fio)) {
             errorFields.push('fio');
@@ -22,7 +23,13 @@ class Form {
         if(!this.__checkEmail(data.email)) {
             errorFields.push('email');
         }
-        this.__checkEmail(data.email);
+        if(errorFields.length) {
+            isValid = false;
+        }
+        return {
+            isValid: isValid,
+            errorFields: errorFields
+        }
     }
     __getData() {
         //=> Object
@@ -69,7 +76,12 @@ class Form {
     }
     submit() {
         //=> undefined
-        this.__validate();
+        let validate = this.__validate();
+        if(validate.isValid) {
+            console.log('request')
+        } else {
+
+        }
     }
 }
 
