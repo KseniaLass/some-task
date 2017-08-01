@@ -1,6 +1,8 @@
 class Form {
     constructor($form) {
         this.form = $form;
+        this.formData = this.__getData();
+        this.urlRequest = ['data/success.json', 'data/error.json', 'data/progress.json'];
 
         this.form.find('#submitButton').on('click', (e) => {
             e.preventDefault();
@@ -9,7 +11,7 @@ class Form {
     }
     __validate() {
         //=> { isValid: Boolean, errorFields: String[] }
-        let data = this.__getData();
+        let data = this.formData;
 
         let isValid = true,
             errorFields = [];
@@ -45,8 +47,24 @@ class Form {
         });
         return inputsValue;
     }
-    __setData(Object) {
-        //=> undefined
+    __setData(formData, validationData) {
+        let fioInput = this.form.find('input[name="fio"]'),
+            emailInput = this.form.find('input[name="email"]'),
+            phoneInput = this.form.find('input[name="phone"]');
+
+        fioInput.val(formData.fio);
+        emailInput.val(formData.email);
+        phoneInput.val(formData.phone);
+
+        if(validationData.errorFields.indexOf('fio') >= 0) {
+            fioInput.addClass('error');
+        }
+        if(validationData.errorFields.indexOf('email') >= 0) {
+            emailInput.addClass('error');
+        }
+        if(validationData.errorFields.indexOf('phone') >= 0) {
+            phoneInput.addClass('error');
+        }
     }
     __checkFIO(value) {
         if(value.split(' ').length === 3) {
@@ -75,13 +93,33 @@ class Form {
         }
     }
     submit() {
-        //=> undefined
+        console.log(this)
         let validate = this.__validate();
-        if(validate.isValid) {
-            console.log('request')
+        let randomUrl = this.urlRequest[Math.floor(Math.random() * this.urlRequest.length)];
+        if(!validate.isValid) {
+            this.__setData(this.formData, validate);
+            return false
         } else {
 
+            $.ajax({
+                type: 'POST',
+                url: randomUrl,
+                contentType: 'application/json; charset=utf-8',
+                success: (data) => {
+                    if(data.status === 'success') {
+                        $('#resultContainer').removeClass().addClass('success').text('Success');
+                    } else if (data.status === 'error') {
+                        $('#resultContainer').removeClass().addClass('error').text(data.reason);
+                    } else if (data.status === 'progress') {
+                        $('#resultContainer').removeClass().addClass('progress').text('Progress...');
+                        setTimeout(() => {this.submit();}, data.timeout);
+                    }
+                }, error: (data) => {
+                    console.log(this)
+                }
+            })
         }
+
     }
 }
 

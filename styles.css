@@ -14,3 +14,18 @@
     display: block;
     font-weight:bold;
 }
+#myForm input {
+    border: 1px solid #9e9e9e;
+}
+#myForm input.error {
+    border: 1px solid red;
+}
+#myForm .success {
+    color: green;
+}
+#myForm .error {
+    color: red;
+}
+#myForm .progress {
+    color: gray;
+}
