@@ -93,14 +93,13 @@ class Form {
         }
     }
     submit() {
-        console.log(this)
         let validate = this.__validate();
         let randomUrl = this.urlRequest[Math.floor(Math.random() * this.urlRequest.length)];
         if(!validate.isValid) {
             this.__setData(this.formData, validate);
             return false
         } else {
-
+            $('#submitButton').prop('disabled', true);
             $.ajax({
                 type: 'POST',
                 url: randomUrl,
@@ -108,14 +107,17 @@ class Form {
                 success: (data) => {
                     if(data.status === 'success') {
                         $('#resultContainer').removeClass().addClass('success').text('Success');
+                        $('#submitButton').prop('disabled', false);
                     } else if (data.status === 'error') {
                         $('#resultContainer').removeClass().addClass('error').text(data.reason);
+                        $('#submitButton').prop('disabled', false);
                     } else if (data.status === 'progress') {
                         $('#resultContainer').removeClass().addClass('progress').text('Progress...');
-                        setTimeout(() => {this.submit();}, data.timeout);
+                        setTimeout(() => {
+                            $('#submitButton').prop('disabled', false);
+                            this.submit();
+                        }, data.timeout);
                     }
-                }, error: (data) => {
-                    console.log(this)
                 }
             })
         }
