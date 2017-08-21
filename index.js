@@ -107,6 +107,7 @@ class Form {
             $.ajax({
                 type: 'GET',
                 url: randomUrl,
+                data: this.__getData(),
                 contentType: 'application/json; charset=utf-8',
                 success: (data) => {
                     if(data.status === 'success') {
