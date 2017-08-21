@@ -57,3 +57,9 @@ body {
 #myForm .progress {
     color: gray;
 }
+#resultContainer {
+    position: absolute;
+    padding: 5px;
+    font-size: 16px;
+    font-weight:bold;
+}

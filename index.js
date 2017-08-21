@@ -105,7 +105,7 @@ class Form {
         } else {
             $('#submitButton').prop('disabled', true);
             $.ajax({
-                type: 'POST',
+                type: 'GET',
                 url: randomUrl,
                 contentType: 'application/json; charset=utf-8',
                 success: (data) => {
