@@ -11,6 +11,9 @@ class Form {
     __validate() {
         //=> { isValid: Boolean, errorFields: String[] }
 
+        //Remove error class from input before validation
+        this.form.find('input').removeClass('error');
+
         // Get value of inputs
         let data = this.__getData(),
             isValid = true,
@@ -50,9 +53,6 @@ class Form {
         return inputsValue;
     }
     __setData(validationData) {
-
-        this.form.find('input').removeClass('error');
-
         // set data and error classes to input elements
         let fioInput = this.form.find('input[name="fio"]'),
             emailInput = this.form.find('input[name="email"]'),
@@ -133,7 +133,6 @@ class Form {
                 }
             })
         }
-
     }
 }
 
