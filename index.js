@@ -1,7 +1,6 @@
 class Form {
     constructor($form) {
         this.form = $form;
-        this.formData = this.__getData();
         this.urlRequest = ['data/success.json', 'data/error.json', 'data/progress.json'];
 
         this.form.find('#submitButton').on('click', (e) => {
@@ -11,11 +10,12 @@ class Form {
     }
     __validate() {
         //=> { isValid: Boolean, errorFields: String[] }
-        // Check each input value in fit function
-        let data = this.formData,
+        // Get value of inputs
+        let data = this.__getData(),
             isValid = true,
             errorFields = [];
 
+        // Check each input value in fit function
         if (!this.__checkFIO(data.fio)) {
             errorFields.push('fio');
         }
@@ -49,14 +49,13 @@ class Form {
         return inputsValue;
     }
     __setData(formData, validationData) {
+
+        this.form.find('input').removeClass('error');
+
         // set data and error classes to input elements
         let fioInput = this.form.find('input[name="fio"]'),
             emailInput = this.form.find('input[name="email"]'),
             phoneInput = this.form.find('input[name="phone"]');
-
-        fioInput.val(formData.fio);
-        emailInput.val(formData.email);
-        phoneInput.val(formData.phone);
 
         if(validationData.errorFields.indexOf('fio') >= 0) {
             fioInput.addClass('error');
