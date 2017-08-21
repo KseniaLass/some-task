@@ -11,9 +11,9 @@ class Form {
     }
     __validate() {
         //=> { isValid: Boolean, errorFields: String[] }
-        let data = this.formData;
-
-        let isValid = true,
+        // Check each input value in fit function
+        let data = this.formData,
+            isValid = true,
             errorFields = [];
 
         if (!this.__checkFIO(data.fio)) {
@@ -37,17 +37,19 @@ class Form {
         //=> Object
         let inputsValue = {};
 
+        // get all inputs in form, except input[type="submit"]
         this.form.find('input').each(function() {
             let name = $(this).attr('name'),
                 type = $(this).attr('type'),
                 value = $(this).val();
-           if(type !== 'submit') {
-               inputsValue[name] = value;
-           }
+            if(type !== 'submit') {
+                inputsValue[name] = value;
+            }
         });
         return inputsValue;
     }
     __setData(formData, validationData) {
+        // set data and error classes to input elements
         let fioInput = this.form.find('input[name="fio"]'),
             emailInput = this.form.find('input[name="email"]'),
             phoneInput = this.form.find('input[name="phone"]');
@@ -93,9 +95,12 @@ class Form {
         }
     }
     submit() {
+        // Get validation status and array with error fields
         let validate = this.__validate();
+        // Set random request url
         let randomUrl = this.urlRequest[Math.floor(Math.random() * this.urlRequest.length)];
         if(!validate.isValid) {
+            // Set data and add error classes
             this.__setData(this.formData, validate);
             return false
         } else {
