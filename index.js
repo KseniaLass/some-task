@@ -1,6 +1,12 @@
 class Form {
     constructor($form) {
         this.form = $form;
+
+        // Input elements
+        this.fioInput = this.form.find('input[name="fio"]');
+        this.emailInput = this.form.find('input[name="email"]');
+        this.phoneInput = this.form.find('input[name="phone"]');
+
         this.urlRequest = ['data/success.json', 'data/error.json', 'data/progress.json'];
 
         this.form.find('#submitButton').on('click', (e) => {
@@ -8,26 +14,29 @@ class Form {
             this.submit();
         });
     }
-    __validate() {
+    validate() {
         //=> { isValid: Boolean, errorFields: String[] }
 
         //Remove error class from input before validation
         this.form.find('input').removeClass('error');
 
         // Get value of inputs
-        let data = this.__getData(),
+        let data = this.getData(),
             isValid = true,
             errorFields = [];
 
         // Check each input value in fit function
         if (!this.__checkFIO(data.fio)) {
             errorFields.push('fio');
+            this.fioInput.addClass('error');
         }
         if(!this.__checkPhone(data.phone)) {
             errorFields.push('phone');
+            this.phoneInput.addClass('error');
         }
         if(!this.__checkEmail(data.email)) {
             errorFields.push('email');
+            this.emailInput.addClass('error');
         }
         if(errorFields.length) {
             isValid = false;
@@ -37,7 +46,7 @@ class Form {
             errorFields: errorFields
         }
     }
-    __getData() {
+    getData() {
         //=> Object
         let inputsValue = {};
 
@@ -52,28 +61,51 @@ class Form {
         });
         return inputsValue;
     }
-    __setData(validationData) {
-        // set data and error classes to input elements
-        let fioInput = this.form.find('input[name="fio"]'),
-            emailInput = this.form.find('input[name="email"]'),
-            phoneInput = this.form.find('input[name="phone"]');
+    setData(data) {
+        this.fioInput.val(data.fio);
+        this.phoneInput.val(data.phone);
+        this.emailInput.val(data.email);
+    }
+    submit() {
+        // Get validation status and array with error fields
+        let validate = this.validate();
 
-        if(validationData.errorFields.indexOf('fio') >= 0) {
-            fioInput.addClass('error');
-        }
-        if(validationData.errorFields.indexOf('email') >= 0) {
-            emailInput.addClass('error');
-        }
-        if(validationData.errorFields.indexOf('phone') >= 0) {
-            phoneInput.addClass('error');
+        // Set random request url
+        let randomUrl = this.urlRequest[Math.floor(Math.random() * this.urlRequest.length)];
+
+        if(!validate.isValid) {
+            return false
+        } else {
+            $('#submitButton').prop('disabled', true);
+            $.ajax({
+                type: 'GET',
+                url: randomUrl,
+                data: this.getData(),
+                contentType: 'application/json; charset=utf-8',
+                success: (data) => {
+                    if(data.status === 'success') {
+                        $('#resultContainer').removeClass().addClass('success').text('Success');
+                        $('#submitButton').prop('disabled', false);
+                    } else if (data.status === 'error') {
+                        $('#resultContainer').removeClass().addClass('error').text(data.reason);
+                        $('#submitButton').prop('disabled', false);
+                    } else if (data.status === 'progress') {
+                        $('#resultContainer').removeClass().addClass('progress').text('Progress...');
+                        setTimeout(() => {
+                            $('#submitButton').prop('disabled', false);
+                            this.submit();
+                        }, data.timeout);
+                    }
+                }
+            })
         }
     }
     __checkFIO(value) {
         let wordsArray = value
-            .split(' ')
-            .filter((word) => {
-               return word != '';
-            });
+        .split(' ')
+        .filter((word) => {
+            return word != '';
+        });
 
         if(wordsArray.length === 3) {
             return true
@@ -98,40 +130,6 @@ class Form {
         let regexp = /^([a-zA-Z0-9_.+-])+\@(ya(ndex)?\.)+(ru|ua|by|kz|com)/g;
         if(regexp.test(value)) {
             return true
-        }
-    }
-    submit() {
-        // Get validation status and array with error fields
-        let validate = this.__validate();
-        // Set random request url
-        let randomUrl = this.urlRequest[Math.floor(Math.random() * this.urlRequest.length)];
-        if(!validate.isValid) {
-            // Set data and add error classes
-            this.__setData(validate);
-            return false
-        } else {
-            $('#submitButton').prop('disabled', true);
-            $.ajax({
-                type: 'GET',
-                url: randomUrl,
-                data: this.__getData(),
-                contentType: 'application/json; charset=utf-8',
-                success: (data) => {
-                    if(data.status === 'success') {
-                        $('#resultContainer').removeClass().addClass('success').text('Success');
-                        $('#submitButton').prop('disabled', false);
-                    } else if (data.status === 'error') {
-                        $('#resultContainer').removeClass().addClass('error').text(data.reason);
-                        $('#submitButton').prop('disabled', false);
-                    } else if (data.status === 'progress') {
-                        $('#resultContainer').removeClass().addClass('progress').text('Progress...');
-                        setTimeout(() => {
-                            $('#submitButton').prop('disabled', false);
-                            this.submit();
-                        }, data.timeout);
-                    }
-                }
-            })
         }
     }
 }
