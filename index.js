@@ -10,6 +10,7 @@ class Form {
     }
     __validate() {
         //=> { isValid: Boolean, errorFields: String[] }
+
         // Get value of inputs
         let data = this.__getData(),
             isValid = true,
@@ -48,7 +49,7 @@ class Form {
         });
         return inputsValue;
     }
-    __setData(formData, validationData) {
+    __setData(validationData) {
 
         this.form.find('input').removeClass('error');
 
@@ -106,7 +107,7 @@ class Form {
         let randomUrl = this.urlRequest[Math.floor(Math.random() * this.urlRequest.length)];
         if(!validate.isValid) {
             // Set data and add error classes
-            this.__setData(this.formData, validate);
+            this.__setData(validate);
             return false
         } else {
             $('#submitButton').prop('disabled', true);
