@@ -68,7 +68,13 @@ class Form {
         }
     }
     __checkFIO(value) {
-        if(value.split(' ').length === 3) {
+        let wordsArray = value
+            .split(' ')
+            .filter((word) => {
+               return word != '';
+            });
+
+        if(wordsArray.length === 3) {
             return true
         }
     }
